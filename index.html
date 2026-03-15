@@ -13,78 +13,7 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-
-    /* ── PASSWORD OVERLAY ── */
-    #pw-overlay {
-      position: fixed; inset: 0; z-index: 9999;
-      background: #1a1a2e;
-      display: flex; align-items: center; justify-content: center;
-    }
-    #pw-box {
-      background: #fff; border-radius: 14px;
-      padding: 40px 36px; width: 340px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-      text-align: center;
-    }
-    #pw-box h2 {
-      font-size: 20px; font-weight: 700; margin-bottom: 6px; color: #1a1a2e;
-    }
-    #pw-box p {
-      font-size: 13px; color: #666; margin-bottom: 22px;
-    }
-    #pw-input {
-      width: 100%; padding: 10px 14px; font-size: 16px;
-      border: 2px solid #ddd; border-radius: 8px;
-      outline: none; letter-spacing: 3px; text-align: center;
-      margin-bottom: 14px; transition: border-color 0.2s;
-    }
-    #pw-input:focus { border-color: #b30000; }
-    #pw-input.shake {
-      animation: shake 0.4s ease;
-      border-color: #b30000;
-    }
-    #pw-btn {
-      width: 100%; padding: 11px; font-size: 15px; font-weight: 600;
-      background: #b30000; color: #fff; border: none; border-radius: 8px;
-      cursor: pointer; transition: background 0.2s;
-    }
-    #pw-btn:hover { background: #8b0000; }
-    #pw-error {
-      margin-top: 12px; font-size: 13px; color: #b30000;
-      min-height: 18px; font-weight: 500;
-    }
-    #pw-attempts {
-      margin-top: 8px; font-size: 12px; color: #999;
-    }
-
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20%      { transform: translateX(-8px); }
-      40%      { transform: translateX(8px); }
-      60%      { transform: translateX(-6px); }
-      80%      { transform: translateX(6px); }
-    }
-
-    /* ── LOCKED SCREEN (after max attempts) ── */
-    #locked-overlay {
-      position: fixed; inset: 0; z-index: 9999;
-      background: #1a1a2e;
-      display: none; align-items: center; justify-content: center;
-    }
-    #locked-box {
-      background: #fff; border-radius: 14px;
-      padding: 40px 36px; width: 340px;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
-      text-align: center;
-    }
-    #locked-box .lock-icon { font-size: 48px; margin-bottom: 14px; }
-    #locked-box h2 { font-size: 20px; font-weight: 700; color: #b30000; margin-bottom: 8px; }
-    #locked-box p { font-size: 13px; color: #555; line-height: 1.5; }
-
-    /* ── MAP ── */
-    #map { height: 100%; display: none; }
+    html, body, #map { height: 100%; margin: 0; }
 
     .topbar {
       position: absolute; z-index: 1000; top: 10px; left: 10px;
@@ -92,7 +21,8 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.15);
       font: 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       display: flex; gap: 10px; align-items: center;
-      max-width: calc(100vw - 20px); flex-wrap: wrap;
+      max-width: calc(100vw - 20px);
+      flex-wrap: wrap;
     }
 
     .legend {
@@ -103,14 +33,14 @@
     .legend .row { display: flex; align-items: center; margin-bottom: 6px; }
     .legend .swatch {
       width: 14px; height: 14px; border-radius: 50%;
-      margin-right: 8px; border: 1px solid rgba(0,0,0,0.25);
+      margin-right: 8px; border: 1px solid rgba(0,0,0,0.25); box-sizing: border-box;
     }
 
     .status {
       position: absolute; left: 10px; bottom: 10px; background: rgba(255,255,255,0.9);
       padding: 6px 8px; border-radius: 6px; font: 12px/1.2 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.15); max-width: 70vw;
-      max-height: 30vh; white-space: pre-wrap; overflow: auto;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15); max-width: 70vw; overflow: auto;
+      max-height: 30vh; white-space: pre-wrap;
     }
 
     select, button { padding: 4px 6px; }
@@ -123,158 +53,163 @@
 </head>
 
 <body>
-
-  <!-- ── PASSWORD OVERLAY ── -->
-  <div id="pw-overlay">
-    <div id="pw-box">
-      <h2>🌉 TxDOT Bridge Risk Map</h2>
-      <p>Project 0-7239 — Enter your access password to continue.</p>
-      <input id="pw-input" type="password" placeholder="••••" maxlength="20"
-             autocomplete="off" spellcheck="false" />
-      <button id="pw-btn">Unlock</button>
-      <div id="pw-error"></div>
-      <div id="pw-attempts"></div>
-    </div>
-  </div>
-
-  <!-- ── LOCKED OVERLAY (after too many attempts) ── -->
-  <div id="locked-overlay">
-    <div id="locked-box">
-      <div class="lock-icon">🔒</div>
-      <h2>Access Locked</h2>
-      <p>Too many incorrect attempts.<br>Please reload the page and try again.</p>
-    </div>
-  </div>
-
-  <!-- ── MAP (hidden until unlocked) ── -->
   <div id="map"></div>
+
+  <div class="topbar">
+    <label for="riskDataset"><strong>Risk type:</strong></label>
+    <select id="riskDataset"></select>
+
+    <label for="typeFilter"><strong>Risk level:</strong></label>
+    <select id="typeFilter">
+      <option value="Top 20">Top 20</option>
+      <option value="Top 50">Top 50</option>
+      <option value="Top 100">Top 100</option>
+      <option value="__ALL__">All bridges</option>
+    </select>
+
+    <button id="reload">Reload</button>
+  </div>
+
+  <pre class="status" id="status">Loading…</pre>
 
   <script>
     // =========================================================
-    // PASSWORD GATE
-    // =========================================================
-    const CORRECT_HASH = "5a042f309522d0319509e82d9ef4e9b19d1be086"; // SHA-1 of "7239"
-    const MAX_ATTEMPTS = 5;
-    let attempts = 0;
-    let mapInitialized = false;
-
-    async function sha1(str) {
-      const buf = new TextEncoder().encode(str);
-      const hash = await crypto.subtle.digest("SHA-1", buf);
-      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,"0")).join("");
-    }
-
-    async function checkPassword() {
-      const input = document.getElementById("pw-input");
-      const errorEl = document.getElementById("pw-error");
-      const attemptsEl = document.getElementById("pw-attempts");
-      const val = input.value.trim();
-
-      if (!val) { errorEl.textContent = "Please enter a password."; return; }
-
-      const hash = await sha1(val);
-
-      if (hash === CORRECT_HASH) {
-        // ✅ Correct — unlock map
-        document.getElementById("pw-overlay").style.display = "none";
-        document.getElementById("map").style.display = "block";
-        if (!mapInitialized) { mapInitialized = true; initMap(); }
-      } else {
-        // ❌ Wrong
-        attempts++;
-        input.value = "";
-        input.classList.remove("shake");
-        void input.offsetWidth; // reflow to restart animation
-        input.classList.add("shake");
-        errorEl.textContent = "Incorrect password. Please try again.";
-
-        const remaining = MAX_ATTEMPTS - attempts;
-        if (remaining <= 0) {
-          // Lock out — show locked screen, hide password screen
-          document.getElementById("pw-overlay").style.display = "none";
-          const lo = document.getElementById("locked-overlay");
-          lo.style.display = "flex";
-        } else {
-          attemptsEl.textContent = `${remaining} attempt${remaining !== 1 ? "s" : ""} remaining`;
-        }
-      }
-    }
-
-    document.getElementById("pw-btn").addEventListener("click", checkPassword);
-    document.getElementById("pw-input").addEventListener("keydown", e => {
-      if (e.key === "Enter") checkPassword();
-    });
-
-    // =========================================================
-    // DATASETS
+    // 1) DATASETS (CSV + per-file risk column)
+    // Put ALL these CSV files in the SAME folder as this HTML.
     // =========================================================
     const DATASETS = [
-      { id: "overheight",     name: "Overheight Collision Risk",   csvUrl: "risk_overheightsss.csv",    riskIndexCol: "Risk_Index" },
-      { id: "fatigue",        name: "Fatigue Risk",                csvUrl: "risk_fatigueee.csv",         riskIndexCol: "Pf_fatigue" },
-      { id: "flood_scour",    name: "Flood + Scour Risk",          csvUrl: "risk_floodd.csv",            riskIndexCol: "Risk_flood" },
-      { id: "wildfire",       name: "Wildfire Risk",               csvUrl: "risk_wildfire.csv",          riskIndexCol: "Risk_wildfire" },
-      { id: "hurricane",      name: "Hurricane Risk",              csvUrl: "risk_hurricaneeeee.csv",     riskIndexCol: "Risk_hurricane" },
-      { id: "explosive",      name: "Explosive Risk",              csvUrl: "risk_explosivee.csv",        riskIndexCol: "CF" },
-      { id: "vessel",         name: "Vessel Collision Risk",       csvUrl: "risk_vessell.csv",           riskIndexCol: "Risk_vessel" },
-      { id: "deterioration",  name: "Advanced Deterioration Risk", csvUrl: "risk_deteriorationn.csv",   riskIndexCol: "Risk_advdet" },
-      { id: "tornado",        name: "Tornado Risk",                csvUrl: "risk_tornado (1).csv",       riskIndexCol: "Risk_tornado" },
-      { id: "overloads",      name: "Overload Risk",               csvUrl: "risk_overloads (1).csv",    riskIndexCol: "Risk_Index" },
+      { id: "overheight",     name: "Overheight Collision Risk",  csvUrl: "risk_overheight_collision.csv",             riskIndexCol: "Risk_Index" },
+      { id: "fatigue",        name: "Fatigue Risk",               csvUrl: "fatigue_riskk.csv",                 riskIndexCol: "Pf_fatigue" },
+      { id: "flood_scour",    name: "Flood + Scour Risk",         csvUrl: "risk_floodd.csv",        riskIndexCol: "Risk_flood" },
+      { id: "wildfire",       name: "Wildfire Risk",              csvUrl: "risk_wildfire.csv",           riskIndexCol: "Risk_wildfire" },
+      { id: "hurricane",      name: "Hurricane Risk",             csvUrl: "risk_hurricanneee.csv",           riskIndexCol: "Risk_hurricane" },
+      { id: "explosive",      name: "Explosive Risk",             csvUrl: "risk_explosivee.csv",               riskIndexCol: "CF" },
+      { id: "vessel",         name: "Vessel Collision Risk",      csvUrl: "risk_vessell.csv",    riskIndexCol: "Risk_vessel" },
+      { id: "deterioration",  name: "Advanced Deterioration Risk",csvUrl: "risk_deteriorationn.csv",      riskIndexCol: "Risk_advdet" },
+      { id: "tornado",        name: "Tornado Risk",               csvUrl: "risk_tornado.csv",            riskIndexCol: "Risk_tornado" },
+      { id: "overloads",      name: "overload Risk",              csvUrl: "risk_overloads.csv",          riskIndexCol: "Risk_Index" },
       { id: "other-truck",     name: "other-truck Risk",           csvUrl: "risk_other_truck.csv",             riskIndexCol: "Risk_truck"}
-
     ];
 
+    // Derived column used for filtering by rank buckets
     const INCIDENT_KEY = "Risk_Level";
 
+    // =========================================================
+    // 2) MAP SETUP
+    // =========================================================
+    const map = L.map("map", { preferCanvas: true }).setView([31, -99], 6);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
+
+    const status = document.getElementById("status");
+    const typeFilter = document.getElementById("typeFilter");
+    const reloadBtn = document.getElementById("reload");
+    const riskDataset = document.getElementById("riskDataset");
+
+    // Populate dataset dropdown
+    for (const ds of DATASETS) {
+      const opt = document.createElement("option");
+      opt.value = ds.id;
+      opt.textContent = ds.name;
+      riskDataset.appendChild(opt);
+    }
+
+    // =========================================================
+    // 3) HELPERS
+    // =========================================================
+
+    // ---- Mathematical / English popup labels (HTML-based math: <sub>, Greek entities, ×, etc.)
     const LABEL_MAP_HTML = {
+      // Common
       "STRUCTURE_NUMBER_008": "Structure Number",
       "STATE_CODE_001": "State Code",
       "COUNTY_CODE_003": "County Code",
       "LOCATION_009": "Location",
       "coordinates (lat, lon)": "Coordinates (lat, lon)",
       "COORDINATES": "Coordinates (lat, lon)",
-      "lat": "Latitude", "lon": "Longitude",
-      "YEAR_BUILT_027": "Year Built", "_year_built": "Year Built",
+      "lat": "Latitude",
+      "lon": "Longitude",
+      "YEAR_BUILT_027": "Year Built",
+      "_year_built": "Year Built",
       "bridge_uid": "Bridge Unique ID",
       "Risk_Level": "Risk Level / Rank Group",
       "Risk_rank_desc": "Rank (descending)",
-      "ADT_029": "ADT", "ADT": "ADT",
-      "TRUCK_PCT": "Truck %", "PERCENT_ADT_TRUCK_109": "Truck % (NBI 109)",
+
+      // Traffic
+      "ADT_029": "ADT",
+      "ADT": "ADT",
+      "TRUCK_PCT": "Truck %",
+      "PERCENT_ADT_TRUCK_109": "Truck % (NBI 109)",
+      "truck_pct_used": "Truck %",
+
+      // Overheight collision
       "MIN_VERT_CLR_010": "Minimum vertical clearance, h<sub>min</sub>",
       "d_vc": "Clearance deficiency, d<sub>vc</sub>",
       "N_detour": "Detoured vehicles/day, N<sub>d</sub>",
       "p_height": "Overheight probability, p<sub>h</sub>",
       "V_elem_height": "Element vulnerability, V<sub>e</sub>",
       "Risk_Index": "Risk index, R",
+
+      // Fatigue
       "ADTT_SL": "Truck traffic (single lane), ADTT",
-      "AGE": "Bridge age, A", "AM_years": "Mean fatigue life, A<sub>M</sub>",
+      "AGE": "Bridge age, A",
+      "AM_years": "Mean fatigue life, A<sub>M</sub>",
       "AE_years": "Evaluation fatigue life, A<sub>E</sub>",
       "Pf_fatigue": "Fatigue failure probability, P<sub>f</sub>",
+
+      // Flood + scour
       "SCOUR_CRITICAL_113": "Scour critical rating",
       "p_flood": "Annual flood probability, p<sub>f</sub>",
       "V_elem_flood": "Element vulnerability, V<sub>e</sub>",
       "V_age_flood": "Age vulnerability, V<sub>age</sub>",
       "V_des_flood": "Design vulnerability, V<sub>des</sub>",
       "V_chan_flood": "Channel vulnerability, V<sub>chan</sub>",
+      "DECK_AREA": "Deck area",
       "I_overwater": "Overwater indicator, I<sub>ow</sub>",
       "Risk_flood": "Flood + scour risk index, R<sub>f</sub>",
+
+      // Wildfire
       "N_wildfires_within_1mi": "Wildfires within 1 mile, N",
+      "T_years_wildfire_obs": "Observation period (years), T",
       "lambda_wildfire": "Wildfire annual rate, &lambda;",
       "p_wildfire": "Annual wildfire probability, p<sub>w</sub>",
+      "V_elem_wildfire": "Element vulnerability, V<sub>e</sub>",
+      "V_age_wildfire": "Age vulnerability, V<sub>age</sub>",
+      "V_des_wildfire": "Design vulnerability, V<sub>des</sub>",
+      "wildfire_design_row_43B": "Bridge design type",
+      "wildfire_material_class": "Material class",
+      "sdes_wildfire_raw_0to5": "Design score (0–5), s<sub>des</sub>",
       "Risk_wildfire": "Wildfire risk index, R<sub>w</sub>",
+
+      // Hurricane
       "V_des_hurr": "Design vulnerability, V<sub>des</sub>",
       "V_scour_hurr": "Scour vulnerability, V<sub>scour</sub>",
       "V_age_hurr": "Age vulnerability, V<sub>age</sub>",
       "Risk_hurricane": "Hurricane risk index, R<sub>h</sub>",
+
+      // Explosive / security
+      "DETOUR_KILOS_019": "Detour length (km)",
+      "DETOUR_MILES": "Detour length (miles)",
+      "HISTORY_037": "History / importance",
       "S_symbolic": "Symbolic importance, S",
       "E_economic": "Economic importance, E",
       "D_detour": "Detour impact, D",
+      "ED": "E &times; D",
       "CF": "Criticality factor, CF = S + (E &times; D)",
+      "Critical_factor": "Criticality factor, CF = S + (E &times; D)",
+
+      // Vessel collision
       "PIER_PROTECTION_111": "Pier protection",
       "pvessel": "Annual vessel collision probability, p<sub>v</sub>",
+      "sdes_vessel": "Design score, s<sub>des</sub>",
       "V_des_vessel": "Design vulnerability, V<sub>des</sub>",
       "V_age_vessel": "Age vulnerability, V<sub>age</sub>",
       "V_elem_vessel": "Element vulnerability, V<sub>e</sub>",
       "Risk_vessel": "Vessel collision risk index, R<sub>v</sub>",
+
+      // Advanced deterioration
       "MAT_GROUP": "Material group",
       "DECK_COND_058": "Deck condition",
       "SUPERSTRUCTURE_COND_059": "Superstructure condition",
@@ -285,23 +220,29 @@
       "D_decay_index": "Decay index, D",
       "p_advdet": "Advanced deterioration probability, p<sub>ad</sub>",
       "Risk_advdet": "Advanced deterioration risk index, R<sub>ad</sub>",
+
+      // Tornado
       "N_i": "Event count, N<sub>i</sub>",
       "lambda_i": "Annual rate, &lambda;<sub>i</sub>",
       "p_tornado": "Annual tornado probability, p<sub>t</sub>",
       "V_age": "Age vulnerability, V<sub>age</sub>",
       "Risk_tornado": "Tornado risk index, R<sub>t</sub>",
+
+      // Overload
       "INVENTORY_RATING_066": "Inventory rating, R<sub>inv</sub>",
       "FUNCTIONAL_CLASS_026": "Functional class",
       "r_i_lb": "Operating rating, r<sub>i</sub>",
       "d_i": "Detoured truck fraction, d<sub>i</sub>",
       "V_age_overload": "Age vulnerability, V<sub>age</sub>",
-      "V_elem_overload": "Element vulnerability, V<sub>e</sub>",
-      "Risk_Explanation": "Risk Explanation",
-      "Street_View_URL": "Street View",
+      "V_elem_overload": "Element vulnerability, V<sub>e</sub>"
     };
 
     function colorMapFor() {
-      return { "Top 20": "#b30000", "Top 50": "#e34a33", "Top 100": "#fd8d3c" };
+      return {
+        "Top 20":  "#b30000",
+        "Top 50":  "#e34a33",
+        "Top 100": "#fd8d3c"
+      };
     }
 
     function looksSwapped(lon, lat) {
@@ -309,12 +250,14 @@
     }
 
     function keyLookupFromKeys(keys, patterns) {
-      return keys.find(k => patterns.some(rx => rx.test(String(k)))) || null;
+      const found = keys.find(k => patterns.some(rx => rx.test(String(k))));
+      return found || null;
     }
 
     function parseCoordsField(val) {
       if (val == null) return null;
-      const m = String(val).trim().match(/-?\d+(?:\.\d+)?/g);
+      const s = String(val).trim();
+      const m = s.match(/-?\d+(?:\.\d+)?/g);
       if (!m || m.length < 2) return null;
       let lat = parseFloat(m[0]), lon = parseFloat(m[1]);
       if (Math.abs(lat) > 90 && Math.abs(lon) <= 90) { const t = lat; lat = lon; lon = t; }
@@ -322,97 +265,86 @@
       return { lat, lon };
     }
 
+    // =========================================================
+    // ✅ CHANGE ONLY THIS PART: ALL MARKERS SAME SIZE
+    // =========================================================
+    function markerRadiusFromRisk(v, datasetId) {
+      return 6; // <-- SAME SIZE FOR ALL BRIDGES (change 6 to 4/5/7 if you want)
+    }
+
     function makePopup(props) {
       if (!props) return "";
+
       const rows = [];
       const isUrl = v => typeof v === "string" && /^https?:\/\//i.test(v);
-      const domainText = url => { try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return url; } };
+      const domainText = url => { try { return new URL(url).hostname.replace(/^www\./,""); } catch { return url; } };
 
       for (const [k, rawV] of Object.entries(props)) {
         if (rawV == null) continue;
         let v = String(rawV).trim();
         if (!v || v.toLowerCase() === "null") continue;
+
         if (isUrl(v)) v = `<a href="${rawV}" target="_blank" rel="noopener">${domainText(rawV)}</a>`;
+
         const label = LABEL_MAP_HTML[k] || k;
-        rows.push(`<tr><th style="text-align:left;padding-right:10px;white-space:nowrap;">${label}</th><td>${v}</td></tr>`);
+        rows.push(
+          `<tr>
+            <th style="text-align:left; padding-right:10px; white-space:nowrap;">${label}</th>
+            <td>${v}</td>
+          </tr>`
+        );
       }
-      return `<div style="font:13px/1.35 system-ui,Segoe UI,Roboto,Arial;"><table>${rows.join("")}</table></div>`;
+
+      return `<div style="font:13px/1.35 system-ui, Segoe UI, Roboto, Arial;">
+                <table>${rows.join("")}</table>
+              </div>`;
     }
 
     // =========================================================
-    // MAP INIT (only called after correct password)
+    // 4) CSV LOADING (PapaParse)
     // =========================================================
-    let map, status, typeFilter, reloadBtn, riskDataset;
-    let currentLayer = null, groupsByType = {}, legendControl = null;
-
-    function initMap() {
-      map = L.map("map", { preferCanvas: true }).setView([31, -99], 6);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: "&copy; OpenStreetMap contributors",
-      }).addTo(map);
-
-      // Build topbar
-      const topbar = document.createElement("div");
-      topbar.className = "topbar";
-      topbar.innerHTML = `
-        <label for="riskDataset"><strong>Risk type:</strong></label>
-        <select id="riskDataset"></select>
-        <label for="typeFilter"><strong>Risk level:</strong></label>
-        <select id="typeFilter">
-          <option value="Top 20">Top 20</option>
-          <option value="Top 50">Top 50</option>
-          <option value="Top 100">Top 100</option>
-          <option value="__ALL__">All bridges</option>
-        </select>
-        <button id="reload">Reload</button>
-      `;
-      document.getElementById("map").appendChild(topbar);
-
-      const statusEl = document.createElement("pre");
-      statusEl.className = "status";
-      statusEl.id = "status";
-      statusEl.textContent = "Loading…";
-      document.getElementById("map").appendChild(statusEl);
-
-      status = statusEl;
-      typeFilter = document.getElementById("typeFilter");
-      reloadBtn = document.getElementById("reload");
-      riskDataset = document.getElementById("riskDataset");
-
-      for (const ds of DATASETS) {
-        const opt = document.createElement("option");
-        opt.value = ds.id; opt.textContent = ds.name;
-        riskDataset.appendChild(opt);
-      }
-
-      reloadBtn.addEventListener("click", loadAndPlot);
-      riskDataset.addEventListener("change", loadAndPlot);
-      loadAndPlot();
-    }
-
     async function readCsvObjectsFromUrl(url) {
       return new Promise((resolve, reject) => {
         Papa.parse(url, {
-          download: true, header: true, dynamicTyping: false, skipEmptyLines: true,
-          complete: r => resolve(r.data || []),
-          error: err => reject(err),
+          download: true,
+          header: true,
+          dynamicTyping: false,
+          skipEmptyLines: true,
+          complete: (results) => {
+            if (results.errors && results.errors.length) {
+              console.warn("CSV parse warnings:", results.errors.slice(0, 5));
+            }
+            resolve(results.data || []);
+          },
+          error: (err) => reject(err),
         });
       });
     }
 
+    // =========================================================
+    // 5) PLOTTING STATE
+    // =========================================================
+    let currentLayer = null;
+    let groupsByType = {};
+    let allMarkers = [];
+    let legendControl = null;
+
     async function plotFromRows(rows, dataset) {
       const RISK_INDEX_COL = dataset.riskIndexCol;
+
       if (!rows.length) throw new Error("No rows found in CSV.");
 
+      // 1) Sort by risk index (descending)
       const sorted = [...rows].sort((a, b) => {
-        const va = Number(a[RISK_INDEX_COL]), vb = Number(b[RISK_INDEX_COL]);
+        const va = Number(a[RISK_INDEX_COL]);
+        const vb = Number(b[RISK_INDEX_COL]);
         if (!isFinite(va) && !isFinite(vb)) return 0;
         if (!isFinite(va)) return 1;
         if (!isFinite(vb)) return -1;
         return vb - va;
       });
 
+      // 2) Assign Risk_Level by rank
       sorted.forEach((r, idx) => {
         const rank = idx + 1;
         if (rank <= 20) r[INCIDENT_KEY] = "Top 20";
@@ -421,101 +353,169 @@
         else r[INCIDENT_KEY] = "All Bridges";
       });
 
+      // 3) Detect coordinate columns
       const sample = sorted[0] || {};
       const keys = Object.keys(sample);
+
       const latKey = keyLookupFromKeys(keys, [/^lat(i(tude)?)?$/i, /^lat_?dd$/i, /^lat_?\d+/i, /^lat/i]);
       const lonKey = keyLookupFromKeys(keys, [/^(lon(g(itude)?)?|lng)$/i, /^lon_?dd$/i, /^long_?\d+/i, /^lon/i, /^long/i]);
       const coordKey = keyLookupFromKeys(keys, [/^coordinates?\s*\(\s*lat\s*,\s*lon\s*\)$/i, /^coordinates$/i, /^coords$/i]);
 
-      if (!((latKey && lonKey) || coordKey)) throw new Error("Could not find coordinate columns.");
+      if (!((latKey && lonKey) || coordKey)) {
+        throw new Error('Could not find latitude/longitude columns or a "coordinates (lat, lon)" column.');
+      }
 
+      // 4) Build parsed points
       const points = [];
       for (const r of sorted) {
         let lat, lon;
+
         if (coordKey) {
           const pair = parseCoordsField(r[coordKey]);
           if (!pair) continue;
           ({ lat, lon } = pair);
         } else {
-          lat = parseFloat(r[latKey]); lon = parseFloat(r[lonKey]);
+          lat = parseFloat(r[latKey]);
+          lon = parseFloat(r[lonKey]);
         }
+
         if (!isFinite(lat) || !isFinite(lon)) continue;
         if (looksSwapped(lon, lat)) { const t = lat; lat = lon; lon = t; }
+
         points.push({ r, lat, lon });
       }
-      if (!points.length) throw new Error("No valid coordinates parsed.");
+      if (!points.length) throw new Error("No valid coordinates parsed from CSV.");
 
+      // 5) Reset layers/UI
       if (currentLayer) { map.removeLayer(currentLayer); currentLayer = null; }
       if (legendControl) { map.removeControl(legendControl); legendControl = null; }
 
+      // 6) Reset groups (CUMULATIVE)
       groupsByType = { "Top 20": [], "Top 50": [], "Top 100": [], "__ALL__": [] };
+      allMarkers = [];
+
       const colors = colorMapFor();
 
+      // 7) Create markers (cumulative buckets so Top 50 includes Top 20, etc.)
       for (const p of points) {
         const lvl = p.r?.[INCIDENT_KEY];
-        const isTop = ["Top 20","Top 50","Top 100"].includes(lvl);
+        const riskVal = p.r?.[RISK_INDEX_COL];
+
+        const isTop = (lvl === "Top 20" || lvl === "Top 50" || lvl === "Top 100");
         const fill = isTop ? (colors[lvl] || "#666") : "#777";
 
         const marker = L.circleMarker([p.lat, p.lon], {
-          radius: 6, fillColor: fill, color: "#333",
-          weight: 1, opacity: 1, fillOpacity: 0.9,
+          radius: markerRadiusFromRisk(riskVal, dataset.id),
+          fillColor: fill,
+          color: "#333",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.9,
         }).bindPopup(makePopup(p.r));
 
+        allMarkers.push(marker);
         groupsByType["__ALL__"].push(marker);
-        if (lvl === "Top 20") { groupsByType["Top 20"].push(marker); groupsByType["Top 50"].push(marker); groupsByType["Top 100"].push(marker); }
-        else if (lvl === "Top 50") { groupsByType["Top 50"].push(marker); groupsByType["Top 100"].push(marker); }
-        else if (lvl === "Top 100") { groupsByType["Top 100"].push(marker); }
+
+        if (lvl === "Top 20") {
+          groupsByType["Top 20"].push(marker);
+          groupsByType["Top 50"].push(marker);
+          groupsByType["Top 100"].push(marker);
+        } else if (lvl === "Top 50") {
+          groupsByType["Top 50"].push(marker);
+          groupsByType["Top 100"].push(marker);
+        } else if (lvl === "Top 100") {
+          groupsByType["Top 100"].push(marker);
+        }
       }
 
+      // 8) Add to map (DEFAULT = Top 20)
       typeFilter.value = "Top 20";
       currentLayer = L.featureGroup(groupsByType["Top 20"]).addTo(map);
+
       const b = currentLayer.getBounds();
       if (b.isValid()) map.fitBounds(b.pad(0.1));
 
+      // 9) Legend
+      const typeValues = ["Top 20", "Top 50", "Top 100"];
       legendControl = L.control({ position: "topright" });
       legendControl.onAdd = function () {
         const div = L.DomUtil.create("div", "legend");
         const h = document.createElement("div");
-        h.textContent = dataset.name; h.style.cssText = "font-weight:600;margin-bottom:6px;";
+        h.textContent = `${dataset.name} (Top Filters)`;
+        h.style.fontWeight = "600";
+        h.style.marginBottom = "6px";
         div.appendChild(h);
-        for (const lvl of ["Top 20","Top 50","Top 100"]) {
+
+        for (const lvl of typeValues) {
           const row = document.createElement("div"); row.className = "row";
           const sw = document.createElement("span"); sw.className = "swatch"; sw.style.background = colors[lvl];
           const lab = document.createElement("span"); lab.textContent = lvl;
-          row.appendChild(sw); row.appendChild(lab); div.appendChild(row);
+          row.appendChild(sw); row.appendChild(lab);
+          div.appendChild(row);
         }
         return div;
       };
       legendControl.addTo(map);
 
-      status.textContent = `Dataset: ${dataset.name}\nShowing: Top 20\nPoints: ${groupsByType["Top 20"].length}`;
+      // 10) Status (default)
+      status.textContent =
+        `Dataset: ${dataset.name}\n` +
+        `File: ${dataset.csvUrl}\n` +
+        `Showing: Top 20\n` +
+        `Points: ${groupsByType["Top 20"].length}\n` +
+        `Marker size is FIXED (same for all).`;
 
+      // 11) Filter behavior
       typeFilter.onchange = () => {
         if (currentLayer) map.removeLayer(currentLayer);
-        const markersToShow = typeFilter.value === "__ALL__" ? groupsByType["__ALL__"] : (groupsByType[typeFilter.value] || []);
+
+        let markersToShow = [];
+        if (typeFilter.value === "__ALL__") markersToShow = groupsByType["__ALL__"];
+        else markersToShow = groupsByType[typeFilter.value] || [];
+
         currentLayer = L.featureGroup(markersToShow).addTo(map);
         const bb = currentLayer.getBounds();
         if (bb.isValid()) map.fitBounds(bb.pad(0.1));
-        const label = typeFilter.value === "__ALL__" ? "All bridges" : typeFilter.value;
-        status.textContent = `Dataset: ${dataset.name}\nShowing: ${label}\nPoints: ${markersToShow.length}`;
+
+        const label = (typeFilter.value === "__ALL__") ? "All bridges" : typeFilter.value;
+        status.textContent =
+          `Dataset: ${dataset.name}\n` +
+          `File: ${dataset.csvUrl}\n` +
+          `Showing: ${label}\n` +
+          `Points: ${markersToShow.length}\n` +
+          `Marker size is FIXED (same for all).`;
       };
     }
 
+    // =========================================================
+    // 6) BOOTSTRAP / RELOAD
+    // =========================================================
     function getSelectedDataset() {
-      return DATASETS.find(d => d.id === (riskDataset?.value)) || DATASETS[0];
+      const id = riskDataset.value;
+      return DATASETS.find(d => d.id === id) || DATASETS[0];
     }
 
     async function loadAndPlot() {
       try {
         const ds = getSelectedDataset();
-        status.textContent = `Fetching ${ds.csvUrl}…`;
+        status.textContent = `Fetching ${ds.csvUrl}…\nDataset: ${ds.name}`;
+
         const rows = await readCsvObjectsFromUrl(ds.csvUrl);
         await plotFromRows(rows, ds);
       } catch (err) {
         console.error(err);
-        status.textContent = `Error: ${err.message}\n\nTip: Put all CSV files in the same folder as this HTML.`;
+        status.textContent =
+          `Error: ${err.message}\n\nTips:\n` +
+          `• Put ALL CSV files in the SAME folder as this HTML.\n` +
+          `• If opening by double-click fails (CORS), run a local server:\n` +
+          `  - VS Code Live Server OR\n` +
+          `  - python -m http.server\n`;
       }
     }
+
+    reloadBtn.addEventListener("click", loadAndPlot);
+    riskDataset.addEventListener("change", loadAndPlot);
+    window.addEventListener("DOMContentLoaded", loadAndPlot);
   </script>
 </body>
 </html>
